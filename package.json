@@ -8,5 +8,10 @@
   },
   "repository": "https://github.com/ColinLienard/gasly.git",
   "author": "colinlienard <colin.lienard87@orange.fr>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.9.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4"
+  }
 }
