@@ -1,0 +1,12 @@
+{
+  "name": "gasly",
+  "version": "0.0.1",
+  "description": "Quickly reuse snippets accross your project.",
+  "main": "bin/index.js",
+  "bin": {
+    "galsy": "./bin/index.js"
+  },
+  "repository": "https://github.com/ColinLienard/gasly.git",
+  "author": "colinlienard <colin.lienard87@orange.fr>",
+  "license": "MIT"
+}
