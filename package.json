@@ -10,11 +10,13 @@
   },
   "repository": "https://github.com/ColinLienard/gasly.git",
   "scripts": {
-    "lint": "eslint bin"
+    "lint": "eslint bin",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "eslint": "^8.9.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.4"
+    "eslint-plugin-import": "^2.25.4",
+    "husky": "^7.0.4"
   }
 }
