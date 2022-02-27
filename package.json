@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "bin/index.js",
   "bin": {
-    "galsy": "./bin/index.js"
+    "gasly": "./bin/index.js"
   },
   "repository": "https://github.com/ColinLienard/gasly.git",
   "scripts": {
