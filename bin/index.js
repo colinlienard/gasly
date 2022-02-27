@@ -7,34 +7,18 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-const readFile = (snippet) => new Promise((resolve, reject) => {
-  fs.readFile(`.gasly/${snippet}`, 'utf8', (error, data) => {
-    if (error) {
-      reject(error);
-    }
-    resolve(data);
-  });
-});
-
-const writeFile = (content, path) => new Promise((resolve, reject) => {
-  fs.writeFile(path, content, (error) => {
-    if (error) {
-      reject(error);
-    }
-    resolve();
-  });
-});
-
 rl.question('Snippet to use: ', (snippet) => {
   rl.question('Path: ', (path) => {
-    rl.question('New file name: ', async (file) => {
+    rl.question('New file name: ', (file) => {
       const [snippetName, extension] = snippet.split('.');
 
-      const content = await readFile(snippet);
-
-      const replacedContent = content.replaceAll(snippetName, file);
-
-      writeFile(replacedContent, `${path}/${file}.${extension}`);
+      try {
+        const content = fs.readFileSync(`.gasly/${snippet}`, 'utf8');
+        const replacedContent = content.replaceAll(snippetName, file);
+        fs.writeFileSync(replacedContent, `${path}/${file}.${extension}`);
+      } catch (error) {
+        console.log(error);
+      }
 
       rl.close();
     });
