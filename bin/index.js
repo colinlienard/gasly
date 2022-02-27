@@ -1,6 +1,7 @@
 #! /usr/bin/env node
-const readline = require('readline');
 const fs = require('fs');
+const path = require('path');
+const readline = require('readline');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -8,16 +9,17 @@ const rl = readline.createInterface({
 });
 
 rl.question('Snippet to use: ', (snippet) => {
-  rl.question('Path: ', (path) => {
+  rl.question('Path: ', (filePath) => {
     rl.question('New file name: ', (file) => {
       const [snippetName, extension] = snippet.split('.');
 
       try {
         const content = fs.readFileSync(`.gasly/${snippet}`, 'utf8');
         const replacedContent = content.replaceAll(snippetName, file);
-        fs.writeFileSync(replacedContent, `${path}/${file}.${extension}`);
-      } catch (error) {
-        console.log(error);
+        fs.writeFileSync(`${filePath}/${file}.${extension}`, replacedContent);
+        console.log(`Your file has been created ! Open it by clicking here: ${path.resolve('.')}/${filePath}/${file}.${extension}`);
+      } catch {
+        console.log('An error occured. See the documentation: https://github.com/ColinLienard/gasly#readme');
       }
 
       rl.close();
