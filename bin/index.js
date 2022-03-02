@@ -45,14 +45,18 @@ process.stdin.on('keypress', (chunk, key) => {
   if (key) {
     switch (key.name) {
       case 'down':
-        selected = selected < snippets.length - 1 ? selected + 1 : selected;
-        clearLog(snippets.length);
-        logSnippets();
+        if (selected < snippets.length - 1) {
+          selected += 1;
+          clearLog(snippets.length);
+          logSnippets();
+        }
         break;
       case 'up':
-        selected = selected > 0 ? selected - 1 : selected;
-        clearLog(snippets.length);
-        logSnippets();
+        if (selected > 0) {
+          selected -= 1;
+          clearLog(snippets.length);
+          logSnippets();
+        }
         break;
       case 'return':
         /* Prompt the path and the name of the new file */
