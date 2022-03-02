@@ -2,11 +2,24 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
+const { clearLog } = require('./utils');
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
+
+const snippets = fs.readdirSync('.gasly', 'utf8');
+
+let selected = 0;
+
+const logSnippets = () => {
+  console.log(
+    snippets.reduce((previous, current, index) => (
+      `${previous}${previous && '\n'}${index === selected ? '>' : ' '} ${current}`
+    ), ''),
+  );
+};
 
 const createFile = (snippet, filePath, file) => {
   const [snippetName, extension] = snippet.split('.');
@@ -20,24 +33,37 @@ const createFile = (snippet, filePath, file) => {
     console.log('An error occured. See the documentation: https://github.com/ColinLienard/gasly#readme');
   }
 
-  rl.close();
+  process.exit();
 };
 
-const snippets = fs.readdirSync('.gasly', 'utf8');
-const selected = 0;
-const logSnippets = () => {
-  const choice = snippets.reduce((previous, current, index) => (
-    `${previous}${previous && '\n'}${index === selected ? '>' : ' '} ${current}`
-  ), '');
-  console.log(choice);
-};
-
+/* Start the prompt */
+console.log('Choose the snippet you want to copy (use keyboard arrows):\n');
 logSnippets();
 
-rl.question('Snippet to use: ', (snippet) => {
-  rl.question('Path: ', (filePath) => {
-    rl.question('New file name: ', (file) => {
-      createFile(snippet, filePath, file);
-    });
-  });
+/* Let user select a snippet */
+process.stdin.on('keypress', (chunk, key) => {
+  if (key) {
+    switch (key.name) {
+      case 'down':
+        selected = selected < snippets.length - 1 ? selected + 1 : selected;
+        clearLog(snippets.length);
+        logSnippets();
+        break;
+      case 'up':
+        selected = selected > 0 ? selected - 1 : selected;
+        clearLog(snippets.length);
+        logSnippets();
+        break;
+      case 'return':
+        /* Prompt the path and the name of the new file */
+        rl.question('Path: ', (filePath) => {
+          rl.question('New file name: ', (file) => {
+            createFile(snippets[selected], filePath, file);
+          });
+        });
+        break;
+      default:
+        break;
+    }
+  }
 });
