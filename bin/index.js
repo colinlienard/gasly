@@ -13,6 +13,7 @@ const snippets = fs.readdirSync('.gasly', 'utf8');
 
 let selected = 0;
 
+/* Log available snippets */
 const logSnippets = () => {
   console.log(
     snippets.reduce((previous, current, index) => (
@@ -21,14 +22,34 @@ const logSnippets = () => {
   );
 };
 
-const createFile = (snippet, filePath, file) => {
-  const [snippetName, extension] = snippet.split('.');
-
+const createFile = (snippet, filePath, name) => {
   try {
-    const content = fs.readFileSync(`.gasly/${snippet}`, 'utf8');
-    const replacedContent = content.replaceAll(snippetName, file);
-    fs.writeFileSync(`${filePath}/${file}.${extension}`, replacedContent);
-    console.log(`Your file has been created ! Open it by clicking here: ${path.resolve('.')}/${filePath}/${file}.${extension}`);
+    if (fs.statSync(`.gasly/${snippet}`).isDirectory()) {
+      /* Create a directory and files inside it */
+      fs.mkdirSync(`${filePath}/${name}`);
+
+      const files = fs.readdirSync(`.gasly/${snippet}`);
+
+      files.forEach((file) => {
+        const [fName, fExtension] = file.split('.');
+
+        const content = fs.readFileSync(`.gasly/${snippet}/${file}`, 'utf8');
+        const replacedContent = content.replaceAll(snippet, name);
+        fs.writeFileSync(`${filePath}/${name}/${fName === snippet ? name : fName}.${fExtension}`, replacedContent);
+      });
+
+      console.log(`Your files has been created ! Open them by clicking here: ${path.resolve('.')}/${filePath}/${name}`);
+    } else {
+      /* Create a single file */
+      const [snippetName, extension] = snippet.split('.');
+      const fullName = `${filePath}/${name}.${extension}`;
+
+      const content = fs.readFileSync(`.gasly/${snippet}`, 'utf8');
+      const replacedContent = content.replaceAll(snippetName, name);
+      fs.writeFileSync(fullName, replacedContent);
+
+      console.log(`Your file has been created ! Open it by clicking here: ${path.resolve('.')}/${fullName}`);
+    }
   } catch {
     console.log('An error occured. See the documentation: https://github.com/ColinLienard/gasly#readme');
   }
@@ -61,8 +82,8 @@ process.stdin.on('keypress', (chunk, key) => {
       case 'return':
         /* Prompt the path and the name of the new file */
         rl.question('Path: ', (filePath) => {
-          rl.question('New file name: ', (file) => {
-            createFile(snippets[selected], filePath, file);
+          rl.question('New file name: ', (name) => {
+            createFile(snippets[selected], filePath, name);
           });
         });
         break;
