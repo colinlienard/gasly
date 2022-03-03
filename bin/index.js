@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
-const { clearLog } = require('./utils');
+const { clearLog, splitFileName } = require('./utils');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -31,18 +31,18 @@ const createFile = (snippet, filePath, name) => {
       const files = fs.readdirSync(`.gasly/${snippet}`);
 
       files.forEach((file) => {
-        const [fName, fExtension] = file.split('.');
+        const [fileName, fileExtension] = splitFileName(file);
 
         const content = fs.readFileSync(`.gasly/${snippet}/${file}`, 'utf8');
         const replacedContent = content.replaceAll(snippet, name);
-        fs.writeFileSync(`${filePath}/${name}/${fName === snippet ? name : fName}.${fExtension}`, replacedContent);
+        fs.writeFileSync(`${filePath}/${name}/${fileName === snippet ? name : fileName}${fileExtension}`, replacedContent);
       });
 
-      console.log(`Your files has been created ! Open them by clicking here: ${path.resolve('.')}/${filePath}/${name}`);
+      console.log(`Your files have been created ! Open them by clicking here: ${path.resolve('.')}/${filePath}/${name}`);
     } else {
       /* Create a single file */
-      const [snippetName, extension] = snippet.split('.');
-      const fullName = `${filePath}/${name}.${extension}`;
+      const [snippetName, extension] = splitFileName(snippet);
+      const fullName = `${filePath}/${name}${extension}`;
 
       const content = fs.readFileSync(`.gasly/${snippet}`, 'utf8');
       const replacedContent = content.replaceAll(snippetName, name);
