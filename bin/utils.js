@@ -8,6 +8,13 @@ const clearLog = (number) => {
   }
 };
 
+const splitFileName = (file) => {
+  const [name] = file.split('.');
+  const extension = file.replace(name, '');
+  return [name, extension];
+};
+
 module.exports = {
   clearLog,
+  splitFileName,
 };
