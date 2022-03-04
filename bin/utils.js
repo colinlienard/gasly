@@ -10,12 +10,29 @@ const clearLog = (number) => {
 
 const colorize = (text, color) => {
   const colors = {
-    blue: '36',
-    green: '32',
-    grey: '90',
-    red: '91',
+    blue: 36,
+    green: 32,
+    grey: 90,
+    red: 91,
+    yellow: 33,
   };
   return `\x1b[${colors[color]}m${text}\x1b[0m`;
+};
+
+const logError = (text) => {
+  console.log(
+    colorize('\n💥 Error!', 'red'),
+    `${text} Look at the documentation:`,
+    colorize(' https://github.com/ColinLienard/gasly#readme', 'blue'),
+  );
+};
+
+const logSuccess = (path) => {
+  console.log(
+    colorize('\n🎉 Success!', 'green'),
+    'Open your file(s) by clicking here:',
+    colorize(`${path}`, 'blue'),
+  );
 };
 
 const splitFileName = (file) => {
@@ -27,5 +44,7 @@ const splitFileName = (file) => {
 module.exports = {
   clearLog,
   colorize,
+  logError,
+  logSuccess,
   splitFileName,
 };

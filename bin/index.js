@@ -2,14 +2,26 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
-const { clearLog, splitFileName, colorize } = require('./utils');
+const {
+  clearLog,
+  colorize,
+  logError,
+  logSuccess,
+  splitFileName,
+} = require('./utils');
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-const snippets = fs.readdirSync('.gasly', 'utf8');
+let snippets = null;
+try {
+  snippets = fs.readdirSync('.gasly', 'utf8');
+} catch {
+  logError(`You need to create files inside a ${colorize('.gasly', 'yellow')} directory.`);
+  process.exit();
+}
 
 let selected = 0;
 
@@ -19,14 +31,6 @@ const logSnippets = () => {
     snippets.reduce((previous, current, index) => (
       `${previous}${previous && '\n'}${index === selected ? colorize(`> ${current}`, 'blue') : `  ${current}`}`
     ), ''),
-  );
-};
-
-const logSuccess = (link) => {
-  console.log(
-    colorize('\n🎉 Success!', 'green'),
-    'Open your file(s) by clicking here: ',
-    colorize(`${path.resolve('.')}/${link}`, 'blue'),
   );
 };
 
@@ -46,7 +50,7 @@ const createFile = (snippet, filePath, name) => {
         fs.writeFileSync(`${filePath}/${name}/${fileName === snippet ? name : fileName}${fileExtension}`, replacedContent);
       });
 
-      logSuccess(`${filePath}/${name}`);
+      logSuccess(`${path.resolve('.')}/${filePath}/${name}`);
     } else {
       /* Create a single file */
       const [snippetName, extension] = splitFileName(snippet);
@@ -56,14 +60,10 @@ const createFile = (snippet, filePath, name) => {
       const replacedContent = content.replaceAll(snippetName, name);
       fs.writeFileSync(fullName, replacedContent);
 
-      logSuccess(fullName);
+      logSuccess(`${path.resolve('.')}/${fullName}`);
     }
   } catch {
-    console.log(
-      colorize('\n💥 Error!', 'red'),
-      'Something went wrong... Look at the documentation: ',
-      colorize(' https://github.com/ColinLienard/gasly#readme', 'blue'),
-    );
+    logError('Something went wrong...');
   }
 
   process.exit();
