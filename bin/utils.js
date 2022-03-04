@@ -8,6 +8,16 @@ const clearLog = (number) => {
   }
 };
 
+const colorize = (text, color) => {
+  const colors = {
+    blue: '36',
+    green: '32',
+    grey: '90',
+    red: '91',
+  };
+  return `\x1b[${colors[color]}m${text}\x1b[0m`;
+};
+
 const splitFileName = (file) => {
   const [name] = file.split('.');
   const extension = file.replace(name, '');
@@ -16,5 +26,6 @@ const splitFileName = (file) => {
 
 module.exports = {
   clearLog,
+  colorize,
   splitFileName,
 };

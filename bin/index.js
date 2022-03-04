@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
-const { clearLog, splitFileName } = require('./utils');
+const { clearLog, splitFileName, colorize } = require('./utils');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -17,8 +17,16 @@ let selected = 0;
 const logSnippets = () => {
   console.log(
     snippets.reduce((previous, current, index) => (
-      `${previous}${previous && '\n'}${index === selected ? '>' : ' '} ${current}`
+      `${previous}${previous && '\n'}${index === selected ? colorize(`> ${current}`, 'blue') : `  ${current}`}`
     ), ''),
+  );
+};
+
+const logSuccess = (link) => {
+  console.log(
+    colorize('\n🎉 Success!', 'green'),
+    'Open your file(s) by clicking here: ',
+    colorize(`${path.resolve('.')}/${link}`, 'blue'),
   );
 };
 
@@ -38,7 +46,7 @@ const createFile = (snippet, filePath, name) => {
         fs.writeFileSync(`${filePath}/${name}/${fileName === snippet ? name : fileName}${fileExtension}`, replacedContent);
       });
 
-      console.log(`Your files have been created ! Open them by clicking here: ${path.resolve('.')}/${filePath}/${name}`);
+      logSuccess(`${filePath}/${name}`);
     } else {
       /* Create a single file */
       const [snippetName, extension] = splitFileName(snippet);
@@ -48,17 +56,25 @@ const createFile = (snippet, filePath, name) => {
       const replacedContent = content.replaceAll(snippetName, name);
       fs.writeFileSync(fullName, replacedContent);
 
-      console.log(`Your file has been created ! Open it by clicking here: ${path.resolve('.')}/${fullName}`);
+      logSuccess(fullName);
     }
   } catch {
-    console.log('An error occured. See the documentation: https://github.com/ColinLienard/gasly#readme');
+    console.log(
+      colorize('\n💥 Error!', 'red'),
+      'Something went wrong... Look at the documentation: ',
+      colorize(' https://github.com/ColinLienard/gasly#readme', 'blue'),
+    );
   }
 
   process.exit();
 };
 
 /* Start the prompt */
-console.log('Choose the snippet you want to copy (use keyboard arrows):\n');
+console.log(
+  colorize('?', 'green'),
+  'Choose the snippet you want to copy',
+  colorize('(use keyboard arrows)', 'grey'),
+);
 logSnippets();
 
 /* Let user select a snippet */
@@ -81,8 +97,8 @@ process.stdin.on('keypress', (chunk, key) => {
         break;
       case 'return':
         /* Prompt the path and the name of the new file */
-        rl.question('Path: ', (filePath) => {
-          rl.question('New file name: ', (name) => {
+        rl.question(`${colorize('?', 'green')} Path of the new file(s) ${colorize('>', 'grey')} `, (filePath) => {
+          rl.question(`\n${colorize('?', 'green')} Name ${colorize('>', 'grey')} `, 'New name', (name) => {
             createFile(snippets[selected], filePath, name);
           });
         });
