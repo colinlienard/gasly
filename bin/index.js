@@ -2,14 +2,26 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
-const { clearLog, splitFileName } = require('./utils');
+const {
+  clearLog,
+  colorize,
+  logError,
+  logSuccess,
+  splitFileName,
+} = require('./utils');
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-const snippets = fs.readdirSync('.gasly', 'utf8');
+let snippets = null;
+try {
+  snippets = fs.readdirSync('.gasly', 'utf8');
+} catch {
+  logError(`You need to create files inside a ${colorize('.gasly', 'yellow')} directory.`);
+  process.exit();
+}
 
 let selected = 0;
 
@@ -17,7 +29,7 @@ let selected = 0;
 const logSnippets = () => {
   console.log(
     snippets.reduce((previous, current, index) => (
-      `${previous}${previous && '\n'}${index === selected ? '>' : ' '} ${current}`
+      `${previous}${previous && '\n'}${index === selected ? colorize(`> ${current}`, 'blue') : `  ${current}`}`
     ), ''),
   );
 };
@@ -38,7 +50,7 @@ const createFile = (snippet, filePath, name) => {
         fs.writeFileSync(`${filePath}/${name}/${fileName === snippet ? name : fileName}${fileExtension}`, replacedContent);
       });
 
-      console.log(`Your files have been created ! Open them by clicking here: ${path.resolve('.')}/${filePath}/${name}`);
+      logSuccess(`${path.resolve('.')}/${filePath}/${name}`);
     } else {
       /* Create a single file */
       const [snippetName, extension] = splitFileName(snippet);
@@ -48,17 +60,21 @@ const createFile = (snippet, filePath, name) => {
       const replacedContent = content.replaceAll(snippetName, name);
       fs.writeFileSync(fullName, replacedContent);
 
-      console.log(`Your file has been created ! Open it by clicking here: ${path.resolve('.')}/${fullName}`);
+      logSuccess(`${path.resolve('.')}/${fullName}`);
     }
   } catch {
-    console.log('An error occured. See the documentation: https://github.com/ColinLienard/gasly#readme');
+    logError('Something went wrong...');
   }
 
   process.exit();
 };
 
 /* Start the prompt */
-console.log('Choose the snippet you want to copy (use keyboard arrows):\n');
+console.log(
+  colorize('?', 'green'),
+  'Choose the snippet you want to copy',
+  colorize('(use keyboard arrows)', 'grey'),
+);
 logSnippets();
 
 /* Let user select a snippet */
@@ -81,8 +97,8 @@ process.stdin.on('keypress', (chunk, key) => {
         break;
       case 'return':
         /* Prompt the path and the name of the new file */
-        rl.question('Path: ', (filePath) => {
-          rl.question('New file name: ', (name) => {
+        rl.question(`${colorize('?', 'green')} Path of the new file(s) ${colorize('>', 'grey')} `, (filePath) => {
+          rl.question(`\n${colorize('?', 'green')} Name ${colorize('>', 'grey')} `, 'New name', (name) => {
             createFile(snippets[selected], filePath, name);
           });
         });
