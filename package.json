@@ -2,13 +2,30 @@
   "name": "gasly",
   "version": "0.0.1",
   "description": "Quickly reuse snippets accross your project.",
-  "author": "colinlienard <colin.lienard87@orange.fr>",
+  "author": "Colin Lienard",
+  "keywords": [
+    "nodejs",
+    "cli",
+    "template",
+    "snippets",
+    "reusable"
+  ],
   "license": "MIT",
   "main": "bin/index.js",
   "bin": {
     "gasly": "./bin/index.js"
   },
-  "repository": "https://github.com/ColinLienard/gasly.git",
+  "files": [
+    "bin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ColinLienard/gasly.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ColinLienard/gasly/issues"
+  },
+  "homepage": "https://github.com/ColinLienard/gasly#readme",
   "scripts": {
     "start": "node bin/index.js",
     "lint": "eslint bin",
