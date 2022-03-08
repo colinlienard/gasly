@@ -1,12 +1,14 @@
 <div align="center">
 
-# 🏎💨 gasly
+# gasly
 
 ![NPM version](https://img.shields.io/npm/v/gasly) ![License](https://img.shields.io/github/license/ColinLienard/gasly)
 
-Quickly reuse snippets accross your project
+🏎💨 Quickly reuse snippets accross your project
 
 </div>
+
+![Demo](./assets/demo.gif)
 
 ---
 
